@@ -1,6 +1,6 @@
 # Fogo e fumaca: Raspberry Pi 3 Model B
 
-Projeto: `/home/admin/incendio-edge`. Ambiente `.venv` preservado. Dependencias em `scripts/raspberry/requirements-referencia.txt`. Cliente Colab em `~/colab-client` preservado.
+Projeto: `/home/admin/incendio-edge`. Ambiente `.venv` preservado. Dependencias em `scripts/raspberry/requirements-referencia.txt`. As ferramentas locais de conexão com o Colab e suas credenciais ficam fora deste repositório.
 
 Perfil atual: INT8 224, duas threads, confianca fogo 0.25 e fumaca 0.15, NMS IoU fogo 0.15 e fumaca 0.45, contencao desativada. O JSON `scripts/raspberry/perfil_atual.json` registra os padroes; nao e carregado automaticamente pelo script. Para variar, use argumentos CLI. Valores 0.17 e 0.18 sao aceitos. IoU maior no NMS permite mais sobreposicao; confianca maior filtra escores mais baixos.
 

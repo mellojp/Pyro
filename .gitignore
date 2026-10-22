@@ -25,3 +25,9 @@ Thumbs.db
 # Inventarios locais de organizacao; hashes dos modelos sao publicos
 /resultados/manifests/*
 !/resultados/manifests/modelos.json
+
+# Ferramentas locais de conexao; scripts/colab/ continua versionado
+/colab/
+/colab-client/
+/experimentos_colab_tools/
+/colab_retomar_int8.py
