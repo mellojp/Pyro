@@ -72,7 +72,7 @@ Esse estudo mantém seu protocolo de comparação com confiança de fumaça em 0
 
 O dataset completo não está incluído; as amostras de calibração e validação estão identificadas em [manifesto.json](resultados/validacao/manifesto.json). Veja as [instruções de exportação no Colab](scripts/colab/README.md). O ZIP completo do treino, logs de execução e inventários de organização ficam apenas no ambiente local; o checkpoint e os resultados necessários estão versionados. Hashes dos modelos: [modelos.json](resultados/manifests/modelos.json).
 
-O [guia do Raspberry já instalado](documentacao/RASPBERRY.md) descreve a pasta de trabalho usada nos experimentos, que tem disposição de scripts diferente da raiz deste clone. Documentos históricos podem citar nomes e caminhos antigos.
+O [guia do Raspberry](documentacao/RASPBERRY.md) descreve a instalação em `~/incendio-edge`, sincronizada com este repositório e com a mesma estrutura de scripts. Documentos históricos podem citar nomes e caminhos antigos.
 
 ## Próximas etapas
 
