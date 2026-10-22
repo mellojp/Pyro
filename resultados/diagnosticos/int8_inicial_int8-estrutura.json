@@ -1,0 +1,44 @@
+{
+  "model_sha256": "4559002e0c7a50169addcf2a08f0ac619e9be59e895012d44a24fe15d291639e",
+  "model_bytes": 7372112,
+  "input_shape": [
+    1,
+    320,
+    320,
+    3
+  ],
+  "output_shape": [
+    1,
+    6300,
+    7
+  ],
+  "input_dtype": "<class 'numpy.uint8'>",
+  "output_dtype": "<class 'numpy.uint8'>",
+  "input_quantization": [
+    0.003921568859368563,
+    0
+  ],
+  "output_quantization": [
+    0.008932248689234257,
+    2
+  ],
+  "tensor_types": {
+    "<class 'numpy.uint8'>": 2,
+    "<class 'numpy.int32'>": 74,
+    "<class 'numpy.int8'>": 330
+  },
+  "ops": {
+    "QUANTIZE": 6,
+    "CONV_2D": 60,
+    "LOGISTIC": 66,
+    "MUL": 75,
+    "PAD": 6,
+    "ADD": 10,
+    "CONCATENATION": 17,
+    "MAX_POOL_2D": 3,
+    "RESIZE_NEAREST_NEIGHBOR": 2,
+    "RESHAPE": 6,
+    "STRIDED_SLICE": 9,
+    "DELEGATE": 4
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "model": "modelos/int8_224.tflite",
+  "threads": 2,
+  "fire_conf": 0.25,
+  "smoke_conf": 0.15,
+  "fire_nms_iou": 0.15,
+  "smoke_nms_iou": 0.45,
+  "containment": null,
+  "note": "Registro dos padroes; JSON nao e carregado automaticamente. Alterar limiares com argumentos CLI."
+}

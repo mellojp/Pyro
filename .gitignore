@@ -1,0 +1,27 @@
+# Ambientes e caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Configuracao e credenciais locais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Backups, transferencias e arquivos temporarios
+*.zip
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+/arquivo/
+/resultados/camera/
+
+# Inventarios locais de organizacao; hashes dos modelos sao publicos
+/resultados/manifests/*
+!/resultados/manifests/modelos.json

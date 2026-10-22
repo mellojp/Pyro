@@ -1,0 +1,73 @@
+{
+  "tensorflow": "2.13.1",
+  "torch": "2.0.1+cpu",
+  "numpy": "1.24.3",
+  "classes": [
+    "fire",
+    "smoke"
+  ],
+  "git_commit": "915bbf294bb74c859f0b41f1c23bc395014ea679",
+  "checkpoint_sha256": "08ab8085de112f14caf43780e6b312fa79997bd596fceca93f4ecbb3021712e5",
+  "numero_calibracao": 300,
+  "numero_diagnostico": 20,
+  "mae_media_pytorch_fp32": 1.1278373115430896e-07,
+  "candidatos_relevantes_fp32": 494,
+  "relevantes_com_caixa_invalida_int8": 0,
+  "fracao_relevantes_com_caixa_invalida": 0.0,
+  "fp32": {
+    "entrada": {
+      "shape": [
+        1,
+        320,
+        320,
+        3
+      ],
+      "dtype": "<class 'numpy.float32'>",
+      "quantizacao": [
+        0.0,
+        0
+      ]
+    },
+    "saida": {
+      "shape": [
+        1,
+        6300,
+        7
+      ],
+      "dtype": "<class 'numpy.float32'>",
+      "quantizacao": [
+        0.0,
+        0
+      ]
+    }
+  },
+  "int8": {
+    "entrada": {
+      "shape": [
+        1,
+        320,
+        320,
+        3
+      ],
+      "dtype": "<class 'numpy.uint8'>",
+      "quantizacao": [
+        0.003921568859368563,
+        0
+      ]
+    },
+    "saida": {
+      "shape": [
+        1,
+        6300,
+        7
+      ],
+      "dtype": "<class 'numpy.uint8'>",
+      "quantizacao": [
+        0.010029016062617302,
+        2
+      ]
+    }
+  },
+  "nota": "Triagem num\u00e9rica, n\u00e3o certifica\u00e7\u00e3o de qualidade. Exige avalia\u00e7\u00e3o rotulada e benchmark no Raspberry.",
+  "triagem": "N\u00e3o houve perda de dimens\u00f5es nos candidatos examinados. Ainda falta validar precis\u00e3o e localiza\u00e7\u00e3o."
+}

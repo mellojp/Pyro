@@ -1,0 +1,27 @@
+[
+    {
+        "Path":  "modelos/fp16_320.tflite",
+        "Bytes":  14151248,
+        "SHA256":  "9B896A4B9519FA29DE85449DE7A45D1E2750274A7BCE1B84CD18EBFC4D850ADB"
+    },
+    {
+        "Path":  "modelos/int8_192.tflite",
+        "Bytes":  7356776,
+        "SHA256":  "BB345B10EB629D58AEB12E15B5D01268823738DCF9686291B3C086DC0A626E9A"
+    },
+    {
+        "Path":  "modelos/int8_224.tflite",
+        "Bytes":  7357320,
+        "SHA256":  "1478AA0447DB09196AFE5541BFF5992A8F88972FD9EBC179135C4763A5AF4C2D"
+    },
+    {
+        "Path":  "modelos/int8_256.tflite",
+        "Bytes":  7357952,
+        "SHA256":  "5BC88B0845A38C42D8004EB80390BDFAD3B5E240C2BF32DC65F00C169AEB91D2"
+    },
+    {
+        "Path":  "modelos/int8_320.tflite",
+        "Bytes":  7359464,
+        "SHA256":  "A0686E74C43142681B29AC4AB27B88E9B963D7640A48CE46252FCE3B1108BEC8"
+    }
+]

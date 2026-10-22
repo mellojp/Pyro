@@ -1,0 +1,328 @@
+----------------------célula----------------------
+from google.colab import drive
+import zipfile
+import os
+import shutil
+import glob
+
+# 1. Montar o Drive
+drive.mount('/content/drive')
+
+# 2. Caminhos
+pasta_drive = '/content/drive/MyDrive/resultados_pesquisa_fogo'
+zip_origem = os.path.join(pasta_drive, 'resultados_treino_v4.zip')
+zip_dataset = os.path.join(pasta_drive, 'dataset_yolo_processado.zip')
+pasta_trabalho = '/content/yolov5'
+
+os.makedirs(pasta_trabalho, exist_ok=True)
+os.chdir(pasta_trabalho)
+
+# 3. Extrair os resultados do treino v4 para dentro do yolov5
+print("A extrair os ficheiros de treino v4...")
+with zipfile.ZipFile(zip_origem, 'r') as zf:
+    zf.extractall('.')
+
+# 4. Extrair o dataset DENTRO da pasta yolov5 (para o export.py o encontrar corretamente)
+if not os.path.exists('dataset_yolo_processado'):
+    print("A extrair dataset para o diretório correto de calibração INT8...")
+    with zipfile.ZipFile(zip_dataset, 'r') as zf:
+        zf.extractall('dataset_yolo_processado')
+
+# 5. Localizar dinamicamente o best.pt que acabou de ser extraído
+pesos = glob.glob('**/weights/best.pt', recursive=True)
+
+if not pesos:
+    raise FileNotFoundError("Não foi possível encontrar o ficheiro best.pt dentro do ZIP extraído!")
+
+best_pt = pesos[0]
+print(f"Modelo encontrado com sucesso em: {best_pt}")
+
+# 6. Exportar para TFLite INT8 com calibração bem-sucedida
+!python export.py \
+    --weights {best_pt} \
+    --include tflite \
+    --imgsz 320 \
+    --int8 \
+    --data dataset_yolo_processado/data.yaml
+
+# 7. Salvar o resultado INT8 real no Drive
+tflite_files = glob.glob('**/weights/*.tflite', recursive=True)
+
+if tflite_files:
+    pasta_origem = os.path.dirname(tflite_files[0])
+    saida_zip = os.path.join(pasta_drive, 'resultados_treino_v4_int8')
+    shutil.make_archive(saida_zip, 'zip', pasta_origem)
+    print(f"Sucesso! Modelo INT8 gerado e salvo em: {saida_zip}.zip")
+else:
+    print("Erro: O ficheiro .tflite quantizado ainda não foi gerado. Verifique os logs acima.")
+
+----------------------saida----------------------
+Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
+A extrair os ficheiros de treino v4...
+A extrair dataset para o diretório correto de calibração INT8...
+Modelo encontrado com sucesso em: weights/best.pt
+export: data=dataset_yolo_processado/data.yaml, weights=['weights/best.pt'], imgsz=[320], batch_size=1, device=cpu, half=False, inplace=False, keras=False, optimize=False, int8=True, per_tensor=False, dynamic=False, cache=, simplify=False, mlmodel=False, opset=17, verbose=False, workspace=4, nms=False, agnostic_nms=False, topk_per_class=100, topk_all=100, iou_thres=0.45, conf_thres=0.25, include=['tflite']
+YOLOv5 🚀 v7.0-561-gaf08ba15 Python-3.13.15 torch-2.11.0+cu130 CPU
+
+Fusing layers...
+Model summary: 68 layers, 7,015,519 parameters, 0 gradients, 15.8 GFLOPs
+
+PyTorch: starting from weights/best.pt with output shape (1, 6300, 7) (13.6 MB)
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792618010.646042    9289 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792618013.138580    9289 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1792618013.139103    9289 cudart_stub.cc:31] Could not find cuda drivers on your machine, GPU will not be used.
+
+TensorFlow SavedModel: starting export with tensorflow 2.21.0...
+WARNING ⚠️ using Tensorflow 2.21.0 > 2.13.1 might cause issue when exporting the model to tflite https://github.com/ultralytics/yolov5/issues/12489
+
+                 from  n    params  module                                  arguments
+E0000 00:00:1792618014.055909    9289 cuda_platform.cc:52] failed call to cuInit: INTERNAL: CUDA error: Failed call to cuInit: CUDA_ERROR_NO_DEVICE: no CUDA-capable device is detected
+  0                -1  1      3520  models.common.Conv                      [3, 32, 6, 2, 2]
+  1                -1  1     18560  models.common.Conv                      [32, 64, 3, 2]
+  2                -1  1     18816  models.common.C3                        [64, 64, 1]
+  3                -1  1     73984  models.common.Conv                      [64, 128, 3, 2]
+  4                -1  1    115712  models.common.C3                        [128, 128, 2]
+  5                -1  1    295424  models.common.Conv                      [128, 256, 3, 2]
+  6                -1  1    625152  models.common.C3                        [256, 256, 3]
+  7                -1  1   1180672  models.common.Conv                      [256, 512, 3, 2]
+  8                -1  1   1182720  models.common.C3                        [512, 512, 1]
+  9                -1  1    656896  models.common.SPPF                      [512, 512, 5]
+ 10                -1  1    131584  models.common.Conv                      [512, 256, 1, 1]
+ 11                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']
+ 12           [-1, 6]  1         0  models.common.Concat                    [1]
+ 13                -1  1    361984  models.common.C3                        [512, 256, 1, False]
+ 14                -1  1     33024  models.common.Conv                      [256, 128, 1, 1]
+ 15                -1  1         0  torch.nn.modules.upsampling.Upsample    [None, 2, 'nearest']
+ 16           [-1, 4]  1         0  models.common.Concat                    [1]
+ 17                -1  1     90880  models.common.C3                        [256, 128, 1, False]
+ 18                -1  1    147712  models.common.Conv                      [128, 128, 3, 2]
+ 19          [-1, 14]  1         0  models.common.Concat                    [1]
+ 20                -1  1    296448  models.common.C3                        [256, 256, 1, False]
+ 21                -1  1    590336  models.common.Conv                      [256, 256, 3, 2]
+ 22          [-1, 10]  1         0  models.common.Concat                    [1]
+ 23                -1  1   1182720  models.common.C3                        [512, 512, 1, False]
+ 24      [17, 20, 23]  1     18879  models.yolo.Detect                      [2, [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]], [128, 256, 512], [320, 320]]
+Model: "functional_15"
+┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┓
+┃ Layer (type)        ┃ Output Shape      ┃    Param # ┃ Connected to      ┃
+┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━┩
+│ input_layer_15      │ (1, 320, 320, 3)  │          0 │ -                 │
+│ (InputLayer)        │                   │            │                   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv (TFConv)    │ (1, 160, 160, 32) │      3,488 │ input_layer_15[0… │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_1 (TFConv)  │ (1, 80, 80, 64)   │     18,496 │ tf_conv[0][0]     │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3 (TFC3)         │ (1, 80, 80, 64)   │     18,624 │ tf_conv_1[0][0]   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_7 (TFConv)  │ (1, 40, 40, 128)  │     73,856 │ tfc3[0][0]        │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_1 (TFC3)       │ (1, 40, 40, 128)  │    115,200 │ tf_conv_7[0][0]   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_15 (TFConv) │ (1, 20, 20, 256)  │    295,168 │ tfc3_1[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_2 (TFC3)       │ (1, 20, 20, 256)  │    623,872 │ tf_conv_15[0][0]  │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_25 (TFConv) │ (1, 10, 10, 512)  │  1,180,160 │ tfc3_2[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_3 (TFC3)       │ (1, 10, 10, 512)  │  1,181,184 │ tf_conv_25[0][0]  │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfsppf (TFSPPF)     │ (1, 10, 10, 512)  │    656,128 │ tfc3_3[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_33 (TFConv) │ (1, 10, 10, 256)  │    131,328 │ tfsppf[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_upsample         │ (1, 20, 20, 256)  │          0 │ tf_conv_33[0][0]  │
+│ (TFUpsample)        │                   │            │                   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_concat           │ (1, 20, 20, 512)  │          0 │ tf_upsample[0][0… │
+│ (TFConcat)          │                   │            │ tfc3_2[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_4 (TFC3)       │ (1, 20, 20, 256)  │    361,216 │ tf_concat[0][0]   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_39 (TFConv) │ (1, 20, 20, 128)  │     32,896 │ tfc3_4[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_upsample_1       │ (1, 40, 40, 128)  │          0 │ tf_conv_39[0][0]  │
+│ (TFUpsample)        │                   │            │                   │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_concat_1         │ (1, 40, 40, 256)  │          0 │ tf_upsample_1[0]… │
+│ (TFConcat)          │                   │            │ tfc3_1[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_5 (TFC3)       │ (1, 40, 40, 128)  │     90,496 │ tf_concat_1[0][0] │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_45 (TFConv) │ (1, 20, 20, 128)  │    147,584 │ tfc3_5[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_concat_2         │ (1, 20, 20, 256)  │          0 │ tf_conv_45[0][0], │
+│ (TFConcat)          │                   │            │ tf_conv_39[0][0]  │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_6 (TFC3)       │ (1, 20, 20, 256)  │    295,680 │ tf_concat_2[0][0] │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_conv_51 (TFConv) │ (1, 10, 10, 256)  │    590,080 │ tfc3_6[0][0]      │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_concat_3         │ (1, 10, 10, 512)  │          0 │ tf_conv_51[0][0], │
+│ (TFConcat)          │                   │            │ tf_conv_33[0][0]  │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tfc3_7 (TFC3)       │ (1, 10, 10, 512)  │  1,181,184 │ tf_concat_3[0][0] │
+├─────────────────────┼───────────────────┼────────────┼───────────────────┤
+│ tf_detect           │ (1, 6300, 7)      │     18,879 │ tfc3_5[0][0],     │
+│ (TFDetect)          │                   │            │ tfc3_6[0][0],     │
+│                     │                   │            │ tfc3_7[0][0]      │
+└─────────────────────┴───────────────────┴────────────┴───────────────────┘
+ Total params: 7,015,519 (26.76 MB)
+ Trainable params: 0 (0.00 B)
+ Non-trainable params: 7,015,519 (26.76 MB)
+TensorFlow SavedModel: export success ✅ 11.1s, saved as weights/best_saved_model (27.1 MB)
+
+TensorFlow Lite: starting export with tensorflow 2.21.0...
+Downloading https://github.com/ultralytics/assets/releases/download/v0.0.0/Arial.ttf to /root/.config/Ultralytics/Arial.ttf...
+100% 755k/755k [00:00<00:00, 173MB/s]
+Saved artifact at '/tmp/tmphypcknmt'. The following endpoints are available:
+
+* Endpoint 'serve'
+  args_0 (POSITIONAL_ONLY): TensorSpec(shape=(1, 320, 320, 3), dtype=tf.float32, name='keras_tensor_121')
+Output Type:
+  TensorSpec(shape=(1, 6300, 7), dtype=tf.float32, name=None)
+Captures:
+  140062204346192: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062188365456: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188367568: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188361424: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062188368336: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188368912: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188371024: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188371408: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188371600: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188371792: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188370448: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188370640: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188370832: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174921360: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174921552: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174921744: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188362192: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062174922512: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174922704: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174923280: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174924432: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174924624: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174924816: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925008: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925200: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925392: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925584: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925776: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174925968: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174926160: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174926352: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174926544: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174926736: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188362768: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062174927504: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174920976: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174929424: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174930384: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174930576: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174930768: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174930960: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174931152: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174931344: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174931536: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174931728: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174931920: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174932112: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174932304: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174932496: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174932688: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174932880: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174933072: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174933264: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174933456: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188363152: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062174934800: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174934416: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174935184: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174935568: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174935760: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174935952: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174936144: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174936336: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174936528: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174936720: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174936912: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174934224: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174933648: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062174934992: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041769360: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041768784: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041769936: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041770704: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041771472: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041771856: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041772048: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041772240: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041772432: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041772624: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041772816: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041773008: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041773200: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041773392: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041773776: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041769168: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041775696: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041776080: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041776272: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041776464: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041776656: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041776848: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041777040: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041777232: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041777424: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041777616: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188364112: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062041778192: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041774544: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041779536: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041779920: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041780112: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041780304: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041780496: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041780688: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041780880: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041781072: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041781264: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041781456: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188364304: TensorSpec(shape=(4, 2), dtype=tf.int32, name=None)
+  140062041782032: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041778576: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041783376: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041783760: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041783952: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041784144: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041775312: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041782416: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062041782608: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103964816: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103965008: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103965200: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103966160: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103966544: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188363536: TensorSpec(shape=(3,), dtype=tf.float32, name=None)
+  140062188366800: TensorSpec(shape=(1, 1, 1600, 2), dtype=tf.float32, name=None)
+  140062188365264: TensorSpec(shape=(3, 1, 3, 1, 2), dtype=tf.float32, name=None)
+  140061103964432: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103964624: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188365840: TensorSpec(shape=(1, 1, 400, 2), dtype=tf.float32, name=None)
+  140061103965392: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140061103965968: TensorSpec(shape=(), dtype=tf.resource, name=None)
+  140062188365648: TensorSpec(shape=(1, 1, 100, 2), dtype=tf.float32, name=None)
+fully_quantize: 0, inference_type: 6, input_inference_type: UINT8, output_inference_type: UINT8
+TensorFlow Lite: export success ✅ 45.7s, saved as weights/best-int8.tflite (7.0 MB)
+
+Export complete (57.1s)
+Results saved to /content/yolov5/weights
+Detect:          python detect.py --weights weights/best-int8.tflite
+Validate:        python val.py --weights weights/best-int8.tflite
+PyTorch Hub:     model = torch.hub.load('ultralytics/yolov5', 'custom', 'weights/best-int8.tflite')
+Visualize:       https://netron.app
+Sucesso! Modelo INT8 gerado e salvo em: /content/drive/MyDrive/resultados_pesquisa_fogo/resultados_treino_v4_int8.zip

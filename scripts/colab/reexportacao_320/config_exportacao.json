@@ -1,0 +1,7 @@
+{
+  "dataset": "/content/exportacao_int8_20261021_220740/dataset",
+  "saida": "/content/exportacao_int8_20261021_220740/resultado",
+  "n_calibracao": 300,
+  "n_diagnostico": 20,
+  "seed": 42
+}

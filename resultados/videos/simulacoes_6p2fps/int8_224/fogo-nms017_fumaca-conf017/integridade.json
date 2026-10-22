@@ -1,0 +1,32 @@
+[
+  {
+    "file": "video1-int8_224-fogo-nms017_fumaca-conf017-6p2fps.mp4",
+    "sha256": "eaf79ddbfc3fb631e614cdf12343c96a79a70ca8f17e0b3ad0eda3e5064b915a",
+    "probe": {
+      "codec_name": "h264",
+      "avg_frame_rate": "31/5",
+      "duration": "28.064516",
+      "nb_frames": "174"
+    }
+  },
+  {
+    "file": "video2-int8_224-fogo-nms017_fumaca-conf017-6p2fps.mp4",
+    "sha256": "d6726d3f630abbd3577b24505d07c634ea9c48e2a8670d74ed42290e33e9f0d5",
+    "probe": {
+      "codec_name": "h264",
+      "avg_frame_rate": "31/5",
+      "duration": "58.225806",
+      "nb_frames": "361"
+    }
+  },
+  {
+    "file": "video3-int8_224-fogo-nms017_fumaca-conf017-6p2fps.mp4",
+    "sha256": "cf5fb2b282e74fd875c8e2937ae5145fa9593b72d8cbee469c6bc00be5582a2e",
+    "probe": {
+      "codec_name": "h264",
+      "avg_frame_rate": "31/5",
+      "duration": "11.129032",
+      "nb_frames": "69"
+    }
+  }
+]

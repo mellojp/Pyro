@@ -1,0 +1,76 @@
+{
+  "model": "int8_192",
+  "video": "video3",
+  "sampled_frames": 23,
+  "source_fps": 30.0,
+  "sample_step": 15,
+  "threads": 2,
+  "boxes": {
+    "nms020": [
+      64,
+      19
+    ],
+    "nms015": [
+      64,
+      19
+    ],
+    "contencao": [
+      60,
+      19
+    ]
+  },
+  "frames_with_detection": {
+    "nms020": [
+      23,
+      17
+    ],
+    "nms015": [
+      23,
+      17
+    ],
+    "contencao": [
+      23,
+      17
+    ]
+  },
+  "mean_ms": {
+    "nms020": {
+      "preprocess_ms": 2.7965210440173824,
+      "inference_ms": 107.03190713019981,
+      "decode_ms": 1.9514195653597277,
+      "nms_ms": 0.5748788263071734,
+      "draw_ms": 3.2217201306079715,
+      "processing_ms": 115.57644669649207
+    },
+    "nms015": {
+      "preprocess_ms": 2.7965210440173824,
+      "inference_ms": 107.03190713019981,
+      "decode_ms": 1.9514195653597277,
+      "nms_ms": 0.7874024350198654,
+      "draw_ms": 3.2614050007554316,
+      "processing_ms": 115.82865517535221
+    },
+    "contencao": {
+      "preprocess_ms": 2.7965210440173824,
+      "inference_ms": 107.03190713019981,
+      "decode_ms": 1.9514195653597277,
+      "nms_ms": 0.8331019570228502,
+      "draw_ms": 3.314914695574376,
+      "processing_ms": 115.92786439217414
+    }
+  },
+  "p95_processing_ms": {
+    "nms020": 118.91279539813695,
+    "nms015": 119.22751809979673,
+    "contencao": 121.85619480005698
+  },
+  "status_before": {
+    "measure_temp": "temp=51.5'C",
+    "get_throttled": "throttled=0x50000"
+  },
+  "status_after": {
+    "measure_temp": "temp=52.1'C",
+    "get_throttled": "throttled=0x50000"
+  },
+  "note": "Offline sampled frames. FPS computed from processing excludes camera/read/encode. Detection counts are not accuracy."
+}

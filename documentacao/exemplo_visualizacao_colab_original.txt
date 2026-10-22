@@ -1,0 +1,36 @@
+import glob
+from IPython.display import HTML
+from base64 import b64encode
+
+# Caminho do modelo refinado
+weights_refined = '/content/yolov5/runs/train/hpo_yolov5_refined_v4/weights/best.pt'
+video_local = "/content/fumaca_externa.mp4"
+
+if os.path.exists(video_local) and os.path.exists(weights_refined):
+    print("A executar inferência com o modelo refinado...")
+
+    !python detect.py \
+        --weights {weights_refined} \
+        --source {video_local} \
+        --img 416 \
+        --conf 0.4 \
+        --name teste_video_refinado \
+        --exist-ok
+
+    videos_gerados = glob.glob('runs/detect/teste_video_refinado/*.mp4')
+
+    if videos_gerados:
+        input_video = videos_gerados[0]
+        output_video = "video_refinado_web.mp4"
+
+        print("A converter o formato para exibição...")
+        os.system(f"ffmpeg -y -i {input_video} -vcodec libx264 {output_video}")
+
+        print("\nReproduzindo vídeo processado com o modelo refinado:")
+        mp4 = open(output_video, 'rb').read()
+        data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
+        display(HTML(f'<video width=640 controls><source src="{data_url}" type="video/mp4"></video>'))
+    else:
+        print("Erro: O vídeo de saída não foi encontrado.")
+else:
+    print("Certifique-se de que o vídeo e o modelo existem nos caminhos indicados.")
