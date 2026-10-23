@@ -55,3 +55,5 @@ No ambiente do Raspberry, a partir da raiz:
 ```bash
 .venv/bin/python -m unittest discover -s tests -v
 ```
+
+Depois de encerrar a coleta, siga o [guia de revisao e exportacao dos negativos](REVISAO_NEGATIVOS.md).

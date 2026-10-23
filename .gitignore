@@ -34,3 +34,4 @@ Thumbs.db
 
 # Coletas da webcam: imagens locais pendentes de revisao
 /dados/coletas/
+/dados/negativos/

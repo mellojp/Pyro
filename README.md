@@ -87,3 +87,5 @@ Na sessão SSH, execute `sudo shutdown -h now`. A sessão será encerrada; aguar
 A implementação de exportação utiliza [YOLOv5 v7.0](https://github.com/ultralytics/yolov5/tree/v7.0). As versões e o commit utilizados estão preservados em `scripts/colab/`.
 
 Coleta supervisionada de candidatos a falsos positivos e teste do FP16: [guia de coleta da webcam](documentacao/COLETA_WEBCAM.md). Os quadros originais ficam locais, pendentes de revisao, e nao sao enviados ao GitHub.
+
+Revisao offline dos candidatos e exportacao somente dos negativos aprovados: [guia de revisao](documentacao/REVISAO_NEGATIVOS.md).
