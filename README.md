@@ -85,3 +85,5 @@ O [guia do Raspberry](documentacao/RASPBERRY.md) descreve a instalação em `~/i
 Na sessão SSH, execute `sudo shutdown -h now`. A sessão será encerrada; aguarde o desligamento concluir antes de retirar a alimentação. Para retomar em outro dia, reconecte a alimentação e acesse a placa por SSH.
 
 A implementação de exportação utiliza [YOLOv5 v7.0](https://github.com/ultralytics/yolov5/tree/v7.0). As versões e o commit utilizados estão preservados em `scripts/colab/`.
+
+Coleta supervisionada de candidatos a falsos positivos e teste do FP16: [guia de coleta da webcam](documentacao/COLETA_WEBCAM.md). Os quadros originais ficam locais, pendentes de revisao, e nao sao enviados ao GitHub.

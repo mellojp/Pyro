@@ -31,3 +31,6 @@ Thumbs.db
 /colab-client/
 /experimentos_colab_tools/
 /colab_retomar_int8.py
+
+# Coletas da webcam: imagens locais pendentes de revisao
+/dados/coletas/
